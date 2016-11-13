@@ -14,9 +14,7 @@ typedef struct Array Array;
 
 // array->data[] 
 
-// functions 
-// note the absence of reference
-// 
+// functions  
 ARRAY_TYPE* array_ptr_at(Array* arr);
 bool array_empty(Array* arr);
 int array_size(Array* arr);

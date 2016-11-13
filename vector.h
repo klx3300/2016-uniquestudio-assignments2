@@ -36,7 +36,11 @@ void vector_clear(Vector* vec);
 
 //      a, b, c, ...,m, where, n, ...
 // =>   a, b, c, ...,m, value, where, n, ...
+// 'where' could be end()
 void vector_insert(Vector* vec, int where, VECTOR_TYPE value);
+
+void vector_erase(Vector* vec, int where);
+
 
 void vector_push_back(Vector* vec, VECTOR_TYPE value);
 void vector_pop_back(Vector* vec);

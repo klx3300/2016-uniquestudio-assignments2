@@ -27,15 +27,14 @@ void list_pop_front(List* lis);
 
 ListIterator list_begin(List* lis);
 ListIterator list_end(List* lis);
-void increse(ListIterator* pIter);
-void decrease(ListIterator* pIter);
+void ListIterator_self_increse(ListIterator* pIter);
+void ListIterator_self_decrease(ListIterator* pIter);
 
 ListIterator list_begin(List* lis);
 ListIterator list_end(List* lis);
 bool ListIterator_equal(ListIterator iter_a, ListIterator iter_b);
 bool ListIterator_not_equal(ListIterator iter_a, ListIterator iter_b);
 
-// something like derefence
 // you have to write like:
 // ---------------------------------------
 // LIST_TYPE value;
