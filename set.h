@@ -9,29 +9,26 @@ typedef double SET_TYPE;
 
 // functions 
 // note the absence of reference
-bool set_empty(Set* lis);
-int set_size(Set* lis);
+bool set_empty(Set* st);
+int set_size(Set* st);
 
-void set_clear(Set* lis);
+void set_clear(Set* st);
 
-//      a, b, c, ...,m, where, n, ...
-// =>   a, b, c, ...,m, value, where, n, ...
-void set_insert(Set* lis, SET_TYPE value);
-void set_earse(Set* lis, SET_TYPE value);
+void set_insert(Set* st, SET_TYPE value);
+void set_earse(Set* st, SET_TYPE value);
 
 
-SetIterator set_begin(Set* lis);
-SetIterator set_end(Set* lis);
+SetIterator set_begin(Set* st);
+SetIterator set_end(Set* st);
+SetIterator set_find(Set* st, SET_TYPE value);
+SetIterator set_lower_bound(Set* st, SET_TYPE value);
+SetIterator set_upper_bound(Set* st, SET_TYPE value);
+
+
 void increse(SetIterator* pIter);
 void decrease(SetIterator* pIter);
 
 bool SetIterator_equal(SetIterator iter_a, SetIterator iter_b);
 bool SetIterator_not_equal(SetIterator iter_a, SetIterator iter_b);
 
-// something like derefence
-// you have to write like:
-// ---------------------------------------
-// SET_TYPE value;
-// *set_get_data_ptr(some_iter) = value;
-// ---------------------------------------
-SET_TYPE* set_get_data_ptr(SetIterator* iter);
+const SET_TYPE* set_get_data_ptr(SetIterator* iter);

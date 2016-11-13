@@ -10,13 +10,13 @@ typedef struct Stack Stack;
 
 // functions 
 // note the absence of reference
-bool stack_empty(Stack* vec);
-int stack_size(Stack* vec);
-int stack_capacity(Stack* vec);
+bool stack_empty(Stack* stk);
+int stack_size(Stack* stk);
 
-void stack_reserve(Stack* vec, int new_cap);
-void stack_shrink_to_fit(Stack* vec);
-void stack_clear(Stack* vec);
+void stack_clear(Stack* stk);
 
-void stack_push(Stack* vec, STACK_TYPE value);
-void stack_pop(Stack* vec);
+void stack_push(Stack* stk, STACK_TYPE value);
+void stack_pop(Stack* stk);
+// return pointer to make it mutable is meaningless.
+STACK_TYPE stack_top(Stack* stk);
+
