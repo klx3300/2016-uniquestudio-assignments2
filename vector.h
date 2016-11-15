@@ -1,6 +1,9 @@
 #include <stdbool.h>
 #include <stdlib.h>
 #define qVector(Template) vector_constructor(sizeof(Template));
+#ifndef Q_VECTOR_H
+#define Q_VECTOR_H
+#endif
 typedef double VECTOR_TYPE;
 // TIPS: re-define the above identifiers
 // in *.cpp file to make them shorter
