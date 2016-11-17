@@ -1,6 +1,7 @@
 
 #include <stdbool.h>
 #include <stdlib.h>
+#define Q_LIST_H
 #define qList(Template) list_constructor(sizeof(Template))
 #define qListIterator(Template) listIterator_constructor(sizeof(Template))
 #define ITERATOR_TYPE_NORMAL 0
