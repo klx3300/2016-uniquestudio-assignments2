@@ -1,42 +1,33 @@
 #include <stdbool.h>
 #include <stdlib.h>
-typedef double VECTOR_TYPE;
+#ifndef Q_VECTOR_H
+#include "vector.h"
+#endif
+
+#define qPriorityQueue(Template,Comparer) priority_queue_constructor(sizeof(Template),Comparer);
+
+typedef double PRIORITY_QUEUE_TYPE;
 // TIPS: re-define the above identifiers
 // in *.cpp file to make them shorter
-// e.g. typedef T = VECTOR_TYPE;
+// e.g. typedef T = PRIORITY_QUEUE_TYPE;
 // NOTE YOU CAN ONLY DO THAT IN *.cpp FILES
 
-typedef struct Vector Vector;
-typedef struct VectorIterator VectorIterator;
-// NOTE THAT C has no reference 
-// so just ensure the followings works
+struct PriorityQueue{
+    Vector* heap;
+    int (*cmp)(void*,void*);
+};
 
-/*
-vector->data[] 
-*/
+typedef struct PriorityQueue PriorityQueue;
 
 // functions 
 // note the absence of reference
-VECTOR_TYPE* vector_ptr_at(Vector* vec);
-bool vector_empty(Vector* vec);
-int vector_size(Vector* vec);
-int vector_capacity(Vector* vec);
+PriorityQueue* priority_queue_constructor(int step,int (*cmp)(void*,void*));
+bool priority_queue_empty(PriorityQueue* stk);
+int priority_queue_size(PriorityQueue* stk);
 
-void vector_reserve(Vector* vec, int new_cap);
-void vector_resize(Vector* vec, int new_size);
-void vector_shrink_to_fit(Vector* vec);
-void vector_clear(Vector* vec);
-// wasting time below
-// skip these 4 commented lines
-// VectorIterator vector_begin(Vector* vec);
-// VectorIterator vector_end(Vector* vec);
-// void increse(VectorIterator* pIter);
-// void decrease(VectorIterator* pIter);
+void priority_queue_clear(PriorityQueue* stk);
 
-
-//      a, b, c, ...,m, where, n, ...
-// =>   a, b, c, ...,m, value, where, n, ...
-void vector_insert(Vector* vec, int where, VECTOR_TYPE value);
-
-void vector_push_back(Vector* vec, VECTOR_TYPE value);
-void vector_pop_back(Vector* vec);
+void priority_queue_push(PriorityQueue* stk, void* value);
+void priority_queue_pop(PriorityQueue* stk);
+// return pointer to make it mutable is meaningless.
+void* priority_queue_top(PriorityQueue* stk);

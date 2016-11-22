@@ -53,6 +53,10 @@ void vector_insert(Vector* vec, int where, void* value);
 
 void vector_erase(Vector* vec, int where);
 
-
+void heap_swap(Vector* vec,int a,int b);
+void heap_swim(Vector* vec,int (*cmp)(void*,void*));
+void heap_sink(Vector* vec,int (*cmp)(void*,void*));
+void heap_pop(Vector* vec);
+//call sink after pop or the heap will be break.
 void vector_push_back(Vector* vec, void* value);
 void vector_pop_back(Vector* vec);

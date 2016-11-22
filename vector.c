@@ -117,3 +117,38 @@ void vector_pop_back(Vector* vec){
         return;
     memset(vec->arr+(vec->counts*vec->step),0,vec->step);
 }
+
+void heap_swap(Vector* vec,int a,int b){
+    void* tmp=malloc(vec->step);
+    memcpy(tmp,vector_ptr_at(vec)+((vec->step)*a),vec->step);
+    memcpy(vector_ptr_at(vec)+((vec->step)*a),vector_ptr_at(vec)+((vec->step)*b),vec->step);
+    memcpy(vector_ptr_at(vec)+((vec->step)*a),tmp,vec->step);
+    free(tmp);
+}
+
+void heap_swim(Vector* vec,int (*cmp)(void*,void*)){
+    int lastelem=vec->counts-1;
+    while(lastelem>1 && (cmp(vector_ptr_at(vec)+(lastelem*(vec->step)),vector_ptr_at(vec)+((lastelem/2)*(vec->step)))>0)){
+        heap_swap(vec,lastelem,lastelem/2);
+        lastelem=lastelem/2;
+    }
+}
+
+void heap_sink(Vector* vec,int (*cmp)(void*,void*)){
+    int firstelem=1;
+    while(2*firstelem<=vec->counts){
+        int j=2*firstelem;
+        if(j<vec->counts && (cmp(vector_ptr_at(vec)+(j*(vec->step)),vector_ptr_at(vec)+((j+1)*(vec->step)))<0)){
+            j++;
+        }
+        if((cmp(vector_ptr_at(vec)+(firstelem*(vec->step)),vector_ptr_at(vec)+(j*(vec->step)))>=0))
+            break;
+        heap_swap(vec,firstelem,j);
+        firstelem=j;
+    }
+}
+
+void heap_pop(Vector* vec){
+    memcpy(vector_ptr_at(vec)+(vec->step),vector_ptr_at(vec)+((vec->counts-1)*(vec->step)),vec->step);
+    vec->counts--;
+}
