@@ -26,6 +26,7 @@ struct Unordered_map{
 // functions 
 // note the absence of reference
 Unordered_map* unordered_map_constructor(int keyStep,int valueStep,unsigned int (*hashfunc)(void*),unsigned int maxhashv);
+MapData* map_data_constructor(Unordered_map* which,void* key,void* value);
 bool unordered_map_empty(Unordered_map* st);
 unsigned int unordered_map_size(Unordered_map* st);
 
