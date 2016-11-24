@@ -15,6 +15,10 @@ void fakeSegmentNotFault(const char* errmsg){
     printf("Runtime Error:%s\n",errmsg);
 }
 
+void qLog(const char* errmsg){
+    printf("LOG\t%s\n",errmsg);
+}
+
 void rreach(void** rptr,int index,int stepLength){
     (*rptr)+=(stepLength*index);
 }
