@@ -1,21 +1,39 @@
-
+#ifndef Q_LIST_H
+#include "list.h"
+#endif
 #include <stdbool.h>
 #include <stdlib.h>
+#define qUnorderedMap(keyType,valueType,hashfunc,maxhashv) unordered_map_constructor(sizeof(keyType),sizeof(valueType),hashfunc,maxhashv)
 typedef struct Unordered_map Unordered_map;
 typedef long long UNORDERED_MAP_KEY;
 typedef double UNORDERED_MAP_TYPE;
 
+typedef struct MapData{
+    void* key;
+    void* value;
+    int keyStep;
+    int valueStep;
+}MapData;
 
+struct Unordered_map{
+    List** listArray;
+    int keyStep;
+    int valueStep;
+    unsigned int (*hashfunc)(void*);
+    unsigned int maxlength;
+    unsigned int counts;
+};
 // functions 
 // note the absence of reference
+Unordered_map* unordered_map_constructor(int keyStep,int valueStep,unsigned int (*hashfunc)(void*),unsigned int maxhashv);
 bool unordered_map_empty(Unordered_map* st);
-int unordered_map_size(Unordered_map* st);
+unsigned int unordered_map_size(Unordered_map* st);
 
 void unordered_map_clear(Unordered_map* st);
 
-void unordered_map_insert(Unordered_map* st, UNORDERED_MAP_KEY key, UNORDERED_MAP_TYPE value);
-void unordered_map_earse(Unordered_map* st, UNORDERED_MAP_KEY key);
+void unordered_map_insert(Unordered_map* st, void* key, void* value);
+void unordered_map_earse(Unordered_map* st, void* key);
 
 // return NULL if not found
 // otherwise return pointer to value 
-UNORDERED_MAP_TYPE* unordered_map_ptr_at(Unordered_map* st, UNORDERED_MAP_KEY key);
+void* unordered_map_ptr_at(Unordered_map* st, void* key);
