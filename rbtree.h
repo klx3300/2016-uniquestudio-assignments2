@@ -50,6 +50,6 @@ rbtreeNode* rbt_remove_priv(rbtreeNode* node,void* key,int keyStep,int (*cmp)(vo
 
 rbtreeIterator* rbtreeIterator_constructor(rbtreeNode* root);
 void rbtreeIterator_increase(rbtreeIterator* x);
-//void rbtreeIterator_decrease(rbtreeIterator* x);
+void rbtreeIterator_decrease(rbtreeIterator* x);
 rbtreeIterator* rbt_first(rbtreeNode* root);
-//rbtreeIterator* rbt_last(rbtreeNode* root);
+rbtreeIterator* rbt_last(rbtreeNode* root);

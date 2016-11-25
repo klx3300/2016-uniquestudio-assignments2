@@ -334,6 +334,58 @@ void rbtreeIterator_increase(rbtreeIterator* this){
     }
 }
 
+void rbtreeIterator_decrease(rbtreeIterator* this){
+    if(stack_empty(this->status)){
+        this->current=NULL;
+        return;
+    }
+    switch((*(int*)stack_top(this->status))){
+        case Q_RBTREE_IDENTITY_RIGHT:
+            qLog("REACH RIGHT");
+            this->current=this->current->parent;
+            (*(int*)stack_top(this->status))=Q_RBTREE_IDENTITY_CENTER;
+            break;
+        case Q_RBTREE_IDENTITY_CENTER:
+            qLog("REACH CENTER");
+            if(this->current->lchild==NULL){
+                if(stack_empty(this->status)){
+                    qLog("FINALLY.");
+                    this->current=NULL;
+                    return;
+                }
+                stack_pop(this->status);
+                rbtreeIterator_decrease(this);
+                return;
+            }
+            this->current=this->current->lchild;
+            (*(int*)stack_top(this->status))=Q_RBTREE_IDENTITY_LEFT;
+            qLog("CENTER GO LEFT");
+            while(this->current->rchild!=NULL){
+                //reach the leaf!
+                qLog("DEEP REACHED");
+                int a=Q_RBTREE_IDENTITY_RIGHT;stack_push((this->status),&a);
+                this->current=this->current->rchild;
+            }
+            if(this->current->lchild!=NULL){
+                qLog("ANOTHER CENTER REACHED");
+                /*(*(int*)stack_top(this->status))=Q_RBTREE_IDENTITY_CENTER;*/
+                int a=Q_RBTREE_IDENTITY_CENTER;stack_push(this->status,&a);
+            }
+            break;
+        case Q_RBTREE_IDENTITY_LEFT:
+            qLog("REACH LEFT");
+            stack_pop(this->status);
+            this->current=this->current->parent;
+            qLog("RECURSIVE");
+            rbtreeIterator_decrease(this);
+            break;
+        default:
+            printf("%d\n",(*(int*)stack_top(this->status)));
+            fakeSegmentFault("InvalidValueException:an invalid value has been put into a specialized stack.");
+            break;
+    }
+}
+
 rbtreeIterator* rbt_first(rbtreeNode* root){
     rbtreeIterator * tmp=rbtreeIterator_constructor(root);
     /*int a=Q_RBTREE_IDENTITY_LEFT;stack_push(tmp->status,&a);*/
@@ -344,6 +396,19 @@ rbtreeIterator* rbt_first(rbtreeNode* root){
     }
     if(tmp->current->rchild!=NULL){
         /*(*(int*)stack_top(tmp->status))=Q_RBTREE_IDENTITY_CENTER;*/
+        int a=Q_RBTREE_IDENTITY_CENTER;stack_push(tmp->status,&a);
+    }
+    return tmp;
+}
+
+rbtreeIterator* rbt_last(rbtreeNode* root){
+    rbtreeIterator * tmp=rbtreeIterator_constructor(root);
+    while(tmp->current->rchild!=NULL){
+        qLog("CONSTRUCTOR GO RIGHT");
+        tmp->current=tmp->current->rchild;
+        int a=Q_RBTREE_IDENTITY_RIGHT;stack_push(tmp->status,&a);
+    }
+    if(tmp->current->lchild!=NULL){
         int a=Q_RBTREE_IDENTITY_CENTER;stack_push(tmp->status,&a);
     }
     return tmp;

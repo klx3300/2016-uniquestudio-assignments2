@@ -54,9 +54,9 @@ int main(void){
         printf("4444SUC PASSED.\n");
     else
         printf("DELETION FAIL\n");
-    rbtreeIterator* iter=rbt_first(tree);
+    rbtreeIterator* iter=rbt_last(tree);
     printf("ROOT ND:%d:%d\n",*(int*)tree->key,*(int*)tree->value);
-    for(;iter->current!=NULL;rbtreeIterator_increase(iter)){
+    for(;iter->current!=NULL;rbtreeIterator_decrease(iter)){
         printf("%d:%d\n",*(int*)(iter->current->key),*(int*)(iter->current->value));
     }
     return 0;
