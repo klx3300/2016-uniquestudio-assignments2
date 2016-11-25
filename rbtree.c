@@ -13,17 +13,23 @@ rbtreeNode* rbt_constructor(int keyStep,int valueStep){
     tmp->counts=1;
     tmp->keyStep=keyStep;
     tmp->valStep=valueStep;
+    tmp->parent=NULL;
     return tmp;
 }
 
 rbtreeNode* rbt_rotateLeft(rbtreeNode* center){
     qLog("CALL ROTATEL");
     rbtreeNode* tmp=center->rchild;
+    rbtreeNode* tparent=center->parent;
     center->rchild=tmp->lchild;
+    if(center->rchild!=NULL)
+        center->rchild->parent=center;
     tmp->lchild=center;
+    center->parent=tmp;
     tmp->color=center->color;
     center->color=Q_RBTREE_RED;
     tmp->counts=center->counts;
+    tmp->parent=tparent;
     center->counts=1+rbt_size(center->lchild)+rbt_size(center->rchild);
     return tmp;
 }
@@ -31,11 +37,16 @@ rbtreeNode* rbt_rotateLeft(rbtreeNode* center){
 rbtreeNode* rbt_rotateRight(rbtreeNode* center){
     qLog("CALL ROTATER");
     rbtreeNode* tmp=center->lchild;
+    rbtreeNode* tparent=center->parent;
     center->lchild=tmp->rchild;
+    if(center->lchild!=NULL)
+        center->lchild->parent=center;
     tmp->rchild=center;
+    center->parent=tmp;
     tmp->color=center->color;
     center->color=Q_RBTREE_RED;
     tmp->counts=center->counts;
+    tmp->parent=tparent;
     center->counts=1+rbt_size(center->lchild)+rbt_size(center->rchild);
     return tmp;
 }
@@ -83,11 +94,13 @@ rbtreeNode* rbt_put_priv(rbtreeNode* node,void* key,void* value,int keyStep,int 
         return tmp;
     }
     int cmpresult=cmp(key,node->key);
-    if(cmpresult<0)
+    if(cmpresult<0){
         node->lchild=rbt_put_priv(node->lchild,key,value,keyStep,valueStep,cmp);
-    else if(cmpresult>0)
+        node->lchild->parent=node;
+    }else if(cmpresult>0){
         node->rchild=rbt_put_priv(node->rchild,key,value,keyStep,valueStep,cmp);
-    else
+        node->rchild->parent=node;
+    }else
         memcpy(node->value,value,valueStep);
     qLog("REBALANCE TRIGGERED.");
     rbtreeNode* tmp=node;
@@ -100,6 +113,10 @@ rbtreeNode* rbt_put_priv(rbtreeNode* node,void* key,void* value,int keyStep,int 
 }
 
 void rbt_remove(rbtreeNode** root,void* key,int (*cmp)(void*,void*)){
+    if(rbt_getValue(*root,key,cmp)==NULL){
+        qLog("ATTEMPT TO REMOVE NON-EXISTENCE VALUE. STOP ****");
+        return;
+    }
     if(((*root)->lchild)!=NULL && ((*root)->rchild)!=NULL && !rbt_isRed((*root)->lchild) && !rbt_isRed((*root)->rchild))
         (*root)->color=Q_RBTREE_RED;
     qLog("CALL REMOVE_PRIV");
@@ -131,8 +148,10 @@ rbtreeNode* rbt_moveRedRight(rbtreeNode* parent){
     qLog("CALL MOVEREDRIGHT");
     rbtreeNode* tmp=parent;
     rbt_reverseFlipColors(tmp);
-    if(tmp->lchild!=NULL && tmp->lchild->lchild!=NULL && !rbt_isRed(tmp->lchild->lchild))
+    if(tmp->lchild!=NULL && tmp->lchild->lchild!=NULL && !rbt_isRed(tmp->lchild->lchild)){
+        /*parent->lchild=rbt_rotateLeft(parent->lchild);*/
         tmp=rbt_rotateRight(tmp);
+    }
     return tmp;
 }
 
@@ -191,6 +210,8 @@ rbtreeNode* rbt_removeMin(rbtreeNode* node){
 
 rbtreeNode* rbt_remove_priv(rbtreeNode* node,void* key,int keyStep,int (*cmp)(void*,void*)){
     rbtreeNode* tmp=node;
+
+    printf("TARGET:%d\n",*(int*)node->key);
     if(cmp(key,tmp->key)<0){
         qLog("HIT LESSER");
         if(tmp->lchild!=NULL && tmp->lchild->lchild!=NULL && !rbt_isRed(tmp->lchild) && !rbt_isRed(tmp->lchild->lchild))
@@ -208,22 +229,34 @@ rbtreeNode* rbt_remove_priv(rbtreeNode* node,void* key,int keyStep,int (*cmp)(vo
         qLog("HIT NOTLESSER");
         if(tmp->lchild!=NULL && rbt_isRed(tmp->lchild))
             tmp=rbt_rotateRight(tmp);
-        qLog("CMP key,tmpkey");
-        if(cmp(key,tmp->key)==0 && (tmp->rchild == NULL))
-            return NULL;
         if(tmp->rchild!=NULL && tmp->rchild->lchild!=NULL && !rbt_isRed(tmp->rchild) && !rbt_isRed(tmp->rchild->lchild))
             tmp=rbt_moveRedRight(tmp);
         if(cmp(key,tmp->key)==0){
             qLog("HIT EQUAL");
-            memcpy(tmp->value,rbt_getValue(tmp->rchild,(rbt_getMin(tmp->rchild))->key,cmp),tmp->valStep);
-            memcpy(tmp->key,rbt_getMin(tmp->rchild)->key,keyStep);
-            rbtreeNode* tmptr=rbt_removeMin(tmp->rchild);
-            if(tmp!=NULL && tmptr==NULL){
-                free(tmp->rchild->key);
-                free(tmp->lchild->value);
-                free(tmp->lchild);
+            if(tmp->rchild!=NULL){
+                memcpy(tmp->value,rbt_getValue(tmp->rchild,(rbt_getMin(tmp->rchild))->key,cmp),tmp->valStep);
+                memcpy(tmp->key,rbt_getMin(tmp->rchild)->key,keyStep);
+                rbtreeNode* tmptr=rbt_removeMin(tmp->rchild);
+                if(tmp!=NULL && tmptr==NULL){
+                    free(tmp->rchild->key);
+                    free(tmp->rchild->value);
+                    free(tmp->rchild);
+                }
+                tmp->rchild=tmptr;
+            }else if(tmp->lchild!=NULL){
+                memcpy(tmp->value,tmp->lchild->value,tmp->valStep);
+                memcpy(tmp->key,tmp->lchild->key,tmp->keyStep);
+                rbtreeNode* tmptr=tmp->lchild;
+                tmp->lchild=tmptr->lchild;
+                tmp->rchild=tmptr->rchild;
+                if(tmp->lchild!=NULL) tmp->lchild->parent=tmp;
+                if(tmp->rchild!=NULL) tmp->rchild->parent=tmp;
+                free(tmptr->key);
+                free(tmptr->value);
+                free(tmptr);
+            }else{
+                return NULL;
             }
-            tmp->rchild=tmptr;
         }else{
             qLog("HIT NOEQUAL");
             if(tmp->rchild==NULL)
@@ -240,4 +273,78 @@ rbtreeNode* rbt_remove_priv(rbtreeNode* node,void* key,int keyStep,int (*cmp)(vo
         }
     }
     return rbt_balance(tmp);
+}
+
+rbtreeIterator* rbtreeIterator_constructor(rbtreeNode* root){
+    rbtreeIterator* tmp=malloc(sizeof(rbtreeIterator));
+    tmp->status=qStack(int);
+    tmp->current=root;
+    return tmp;
+}
+
+void rbtreeIterator_increase(rbtreeIterator* this){
+    if(stack_empty(this->status)){
+        this->current=NULL;
+        return;
+    }
+    switch((*(int*)stack_top(this->status))){
+        case Q_RBTREE_IDENTITY_LEFT:
+            qLog("REACH LEFT");
+            this->current=this->current->parent;
+            (*(int*)stack_top(this->status))=Q_RBTREE_IDENTITY_CENTER;
+            break;
+        case Q_RBTREE_IDENTITY_CENTER:
+            qLog("REACH CENTER");
+            if(this->current->rchild==NULL){
+                if(stack_empty(this->status)){
+                    qLog("FINALLY.");
+                    this->current=NULL;
+                    return;
+                }
+                stack_pop(this->status);
+                rbtreeIterator_increase(this);
+                return;
+            }
+            this->current=this->current->rchild;
+            (*(int*)stack_top(this->status))=Q_RBTREE_IDENTITY_RIGHT;
+            qLog("CENTER GO RIGHT");
+            while(this->current->lchild!=NULL){
+                //reach the leaf!
+                qLog("DEEP REACHED");
+                int a=Q_RBTREE_IDENTITY_LEFT;stack_push((this->status),&a);
+                this->current=this->current->lchild;
+            }
+            if(this->current->rchild!=NULL){
+                qLog("ANOTHER CENTER REACHED");
+                /*(*(int*)stack_top(this->status))=Q_RBTREE_IDENTITY_CENTER;*/
+                int a=Q_RBTREE_IDENTITY_CENTER;stack_push(this->status,&a);
+            }
+            break;
+        case Q_RBTREE_IDENTITY_RIGHT:
+            qLog("REACH RIGHT");
+            stack_pop(this->status);
+            this->current=this->current->parent;
+            qLog("RECURSIVE");
+            rbtreeIterator_increase(this);
+            break;
+        default:
+            printf("%d\n",(*(int*)stack_top(this->status)));
+            fakeSegmentFault("InvalidValueException:an invalid value has been put into a specialized stack.");
+            break;
+    }
+}
+
+rbtreeIterator* rbt_first(rbtreeNode* root){
+    rbtreeIterator * tmp=rbtreeIterator_constructor(root);
+    /*int a=Q_RBTREE_IDENTITY_LEFT;stack_push(tmp->status,&a);*/
+    while(tmp->current->lchild!=NULL){
+        qLog("CONSTRUCTOR GO LEFT");
+        tmp->current=tmp->current->lchild;
+        int a=Q_RBTREE_IDENTITY_LEFT;stack_push(tmp->status,&a);
+    }
+    if(tmp->current->rchild!=NULL){
+        /*(*(int*)stack_top(tmp->status))=Q_RBTREE_IDENTITY_CENTER;*/
+        int a=Q_RBTREE_IDENTITY_CENTER;stack_push(tmp->status,&a);
+    }
+    return tmp;
 }

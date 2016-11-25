@@ -1,7 +1,8 @@
+#define Q_STACK_H
 #include <stdbool.h>
 #include <stdlib.h>
-#ifndef Q_VECTOR_H
-#include "vector.h"
+#ifndef Q_LIST_H
+#include "list.h"
 #endif
 #define qStack(Template) stack_constructor(sizeof(Template))
 typedef double STACK_TYPE;
@@ -11,7 +12,7 @@ typedef double STACK_TYPE;
 // NOTE YOU CAN ONLY DO THAT IN *.cpp FILES
 
 struct Stack{
-    Vector *content;
+     List *content;
 };
 
 typedef struct Stack Stack;

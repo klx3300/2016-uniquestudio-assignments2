@@ -16,7 +16,7 @@ void fakeSegmentNotFault(const char* errmsg){
 }
 
 void qLog(const char* errmsg){
-    printf("LOG\t%s\n",errmsg);
+    /*printf("LOG\t%s\n",errmsg);*/
 }
 
 void rreach(void** rptr,int index,int stepLength){

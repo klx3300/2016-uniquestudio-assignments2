@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include "rbtree.h"
+#include "voidutils.h"
 
 int cmpints(void* a,void* b){
     int v1=(*((int*)a));
@@ -31,14 +32,32 @@ int main(void){
     a=56789,b=2,rbt_insert(&tree,&a,&b,cmpints);
     a=12344;b=1,rbt_insert(&tree,&a,&b,cmpints);
     a=198,b=998,rbt_insert(&tree,&a,&b,cmpints);
-    
+    a=12;
+    if(rbt_getValue(tree,&a,cmpints)!=NULL)
+        printf("SUC PASSED.\n");
+    else
+        printf("INSERTION FAIL\n");
     a=123;rbt_remove(&tree,&a,cmpints);
-    printf("REMOVE FIRST COMPLETED.\n");
+    /*printf("REMOVE FIRST COMPLETED.\n");*/
+    a=12;rbt_getValue(tree,&a,cmpints);
     a=17;rbt_remove(&tree,&a,cmpints);
-    a=4;rbt_remove(&tree,&a,cmpints);
-    a=12344;rbt_remove(&tree,&a,cmpints);
-    printf("TRYING TO DELETE NON-EXIST ELEMENT.\n");
-    a=9988;rbt_remove(&tree,&a,cmpints);
-    printf("NOT THIS PROBLEM\n");
+    /*qLog("DELETE 4");*/
+    /*a=4;rbt_remove(&tree,&a,cmpints);*/
+    /*qLog("DELETE 12344");*/
+    /*a=12344;rbt_remove(&tree,&a,cmpints);*/
+    /*printf("TRYING TO DELETE NON-EXIST ELEMENT.\n");*/
+    /*a=9988;rbt_remove(&tree,&a,cmpints);*/
+    /*printf("NOT THIS PROBLEM\n");*/
+
+    a=198;
+    if(rbt_getValue(tree,&a,cmpints)!=NULL)
+        printf("4444SUC PASSED.\n");
+    else
+        printf("DELETION FAIL\n");
+    rbtreeIterator* iter=rbt_first(tree);
+    printf("ROOT ND:%d:%d\n",*(int*)tree->key,*(int*)tree->value);
+    for(;iter->current!=NULL;rbtreeIterator_increase(iter)){
+        printf("%d:%d\n",*(int*)(iter->current->key),*(int*)(iter->current->value));
+    }
     return 0;
 }

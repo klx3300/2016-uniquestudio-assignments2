@@ -32,7 +32,7 @@ ListIterator* listIterator_constructor(int stepLength){
 }
 
 bool list_empty(List* lst){
-    return lst->size;
+    return !lst->size;
 }
 
 int list_size(List* lst){
