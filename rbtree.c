@@ -413,3 +413,52 @@ rbtreeIterator* rbt_last(rbtreeNode* root){
     }
     return tmp;
 }
+
+rbtreeIterator* rbt_find(rbtreeNode* root,void* key,int (*cmp)(void*,void*)){
+    rbtreeIterator* tmp=rbtreeIterator_constructor(root);
+    while(1){
+        int cmpresult=cmp(key,tmp->current->key);
+        if(cmpresult>0){
+            if(tmp->current->rchild==NULL){
+                free(tmp);
+                return NULL;
+            }
+            int a=Q_RBTREE_IDENTITY_RIGHT;stack_push(tmp->status,&a);
+            tmp->current=tmp->current->rchild;
+        }else if(cmpresult<0){
+            if(tmp->current->lchild==NULL){
+                free(tmp);
+                return NULL;
+            }
+            int a=Q_RBTREE_IDENTITY_LEFT;stack_push(tmp->status,&a);
+            tmp->current=tmp->current->lchild;
+        }else{
+            if(tmp->current->lchild!=NULL || tmp->current->rchild!=NULL){
+                int a=Q_RBTREE_IDENTITY_CENTER;stack_push(tmp->status,&a);
+            }
+            return tmp;
+        }
+    }
+}
+
+rbtreeIterator* rbt_getNext(rbtreeNode* root,void* key,int (*cmp)(void*,void*)){
+    rbtreeIterator* i=rbt_find(root,key,cmp);
+    rbtreeIterator_increase(i);
+    return i;
+}
+
+rbtreeIterator* rbt_getPrev(rbtreeNode* root,void* key,int (*cmp)(void*,void*)){
+    rbtreeIterator* i=rbt_find(root,key,cmp);
+    rbtreeIterator_decrease(i);
+    return i;
+}
+
+void rbt_clear(rbtreeNode* current){
+    free(current->value);
+    free(current->key);
+    if(current->lchild!=NULL)
+        rbt_clear(current->lchild);
+    if(current->rchild!=NULL)
+        rbt_clear(current->rchild);
+    free(current);
+}

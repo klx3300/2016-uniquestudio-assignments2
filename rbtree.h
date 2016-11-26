@@ -53,3 +53,7 @@ void rbtreeIterator_increase(rbtreeIterator* x);
 void rbtreeIterator_decrease(rbtreeIterator* x);
 rbtreeIterator* rbt_first(rbtreeNode* root);
 rbtreeIterator* rbt_last(rbtreeNode* root);
+rbtreeIterator* rbt_find(rbtreeNode* root,void* key,int (*cmp)(void*,void*));
+rbtreeIterator* rbt_getNext(rbtreeNode* root,void* key,int (*cmp)(void*,void*));
+rbtreeIterator* rbt_getPrev(rbtreeNode* root,void* key,int (*cmp)(void*,void*));
+void rbt_clear(rbtreeNode* current);

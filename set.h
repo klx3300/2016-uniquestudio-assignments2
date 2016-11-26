@@ -31,18 +31,18 @@ void set_insert(Set* st, void* key,void* value);
 void set_erase(Set* st, void* key);
 
 
-SetIterator set_begin(Set* st);
-SetIterator set_end(Set* st);
-SetIterator set_find(Set* st, void* key);
-SetIterator set_lower_bound(Set* st, void* key);
-SetIterator set_upper_bound(Set* st, void* key);
+SetIterator* set_begin(Set* st);
+SetIterator* set_end(Set* st);
+SetIterator* set_find(Set* st, void* key);
+SetIterator* set_lower_bound(Set* st, void* key);
+SetIterator* set_upper_bound(Set* st, void* key);
 
 
 void SetIterator_self_increase(SetIterator* pIter);
 void SetIterator_self_decrease(SetIterator* pIter);
 
 // iterators is of the same location.
-bool SetIterator_equal(SetIterator iter_a, SetIterator iter_b);
-bool SetIterator_not_equal(SetIterator iter_a, SetIterator iter_b);
+bool SetIterator_equal(SetIterator* iter_a, SetIterator* iter_b);
+bool SetIterator_not_equal(SetIterator* iter_a, SetIterator* iter_b);
 
 const void* set_get_data_ptr(SetIterator* iter);
