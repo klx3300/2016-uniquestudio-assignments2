@@ -3,7 +3,7 @@
 #include <sys/time.h>
 
 // your headers*********************
-
+#include "set.h"
 // custom headers end***************
 
 const unsigned int FLAG_INSERT=1;
@@ -25,46 +25,53 @@ const int LEVEL_7_SIZE=134217728;
 
 // which test would be run.
 // sample given below.
-const unsigned int FLAG_WHICH_TEST= FLAG_INSERT | FLAG_SEARCH | FLAG_DELETE;
+unsigned int FLAG_WHICH_TEST= FLAG_INSERT | FLAG_SEARCH | FLAG_DELETE | FLAG_ITERATION_FRONT | FLAG_ITERATION_BACK;
+
+int comparator(void* a,void* b){
+    return (*(int*)a)-(*(int*)b);
+}
 
 void insert_operation(void* container,int key,int value){
     // convert the void ptr to your container and then start.
-
+    int k=key,v=value;
+    set_insert((Set*)container,&k,&v);
 }
 
 void* initialize_operation(int maxsize){
     // call your constructor and then return.
-
-    return NULL;    
+    Set* st=qSet(int,int,comparator);
+    return st;    
 }
 
 void search_operation(void* container,int key){
-
+    int k=key;
+    rbt_getValue(((Set*)container)->root,&k,comparator);
 }
 
 void erase_operation(void* container,int key){
-
+    int k=key;
+    set_erase((Set*)container,&k);
 }
 
 void* init_iterator_first(void* container){
     // call your constructor
     
-    return NULL;
+    return set_begin((Set*)container);
 }
 
 void* init_iterator_last(void* container){
 
-    return NULL;
+    return set_end((Set*)container);
 }
 
 void iterator_increase(void* iterator){
     // increase your iterator
-
+    SetIterator_self_increase((SetIterator*)iterator);
 }
 
 void iterator_decrease(void* iterator){
     // decrease your iterator
-
+    SetIterator_self_decrease((SetIterator*)iterator);
 }
 
 int iteration_end_flag(void* iterator){
@@ -72,7 +79,7 @@ int iteration_end_flag(void* iterator){
     // if it does meet,return true
     // otherwise,false instead.
     
-    return 1;
+    return ((SetIterator*)iterator)->ptr->current==NULL;
 }
 
 // custom operation details end **********************
