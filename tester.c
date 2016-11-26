@@ -108,18 +108,6 @@ void tester(int size){
         gettimeofday(&end,NULL);
         printf("RESULT\n\ttime consumption:%ld\n",(end.tv_sec-start.tv_sec)*1000000-(end.tv_usec-start.tv_usec));
     }
-    if(FLAG_WHICH_TEST & FLAG_DELETE){
-        printf("TEST\tDELETION\n");
-        for(int i=0;i<size;i++){
-            keyArray[i]=rand();
-        }
-        gettimeofday(&start,NULL);
-        for(int i=0;i<size;i++){
-            erase_operation(container,keyArray[i]);
-        }
-        gettimeofday(&end,NULL);
-        printf("RESULT\n\ttime consumption:%ld\n",(end.tv_sec-start.tv_sec)*1000000-(end.tv_usec-start.tv_usec));
-    }
     if(FLAG_WHICH_TEST & FLAG_ITERATION_FRONT){
         printf("TEST\tITERATION FROM FRONT\n");
         for(int i=0;i<size;i++){
@@ -138,6 +126,18 @@ void tester(int size){
         }
         gettimeofday(&start,NULL);
         for(void* iter=init_iterator_last(container);!iteration_end_flag(iter);iterator_decrease(iter)){
+        }
+        gettimeofday(&end,NULL);
+        printf("RESULT\n\ttime consumption:%ld\n",(end.tv_sec-start.tv_sec)*1000000-(end.tv_usec-start.tv_usec));
+    }
+    if(FLAG_WHICH_TEST & FLAG_DELETE){
+        printf("TEST\tDELETION\n");
+        for(int i=0;i<size;i++){
+            keyArray[i]=rand();
+        }
+        gettimeofday(&start,NULL);
+        for(int i=0;i<size;i++){
+            erase_operation(container,keyArray[i]);
         }
         gettimeofday(&end,NULL);
         printf("RESULT\n\ttime consumption:%ld\n",(end.tv_sec-start.tv_sec)*1000000-(end.tv_usec-start.tv_usec));
