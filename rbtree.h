@@ -23,7 +23,6 @@ typedef struct rbtreeNode{
 
 typedef struct rbtreeIterator{
     struct rbtreeNode* current;
-    Stack* status;
 }rbtreeIterator;
 
 rbtreeNode* rbt_constructor(int keyStep,int valueStep);

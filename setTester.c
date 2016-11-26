@@ -149,8 +149,8 @@ void tester(int size){
         gettimeofday(&end,NULL);
         printf("RESULT\n\ttime consumption:%ld\n",(end.tv_sec-start.tv_sec)*1000000+(end.tv_usec-start.tv_usec));
     }
-    printf("TEST WITH SAMPLE SIZE %d OVER.\nPRESS ENTER TO CONTINUE.",size);
-    scanf("");
+    printf("TEST WITH SAMPLE SIZE %d OVER.\n",size);
+    system("read -p \"PRESS ENTER TO CONTINUE\" var");
     printf("\n");
 }
 

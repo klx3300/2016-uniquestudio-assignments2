@@ -257,151 +257,76 @@ rbtreeNode* rbt_remove_priv(rbtreeNode* node,void* key,int keyStep,int (*cmp)(vo
 
 rbtreeIterator* rbtreeIterator_constructor(rbtreeNode* root){
     rbtreeIterator* tmp=malloc(sizeof(rbtreeIterator));
-    tmp->status=qStack(int);
     tmp->current=root;
     return tmp;
 }
 
 void rbtreeIterator_increase(rbtreeIterator* this){
-    if(stack_empty(this->status)){
-        this->current=NULL;
-        return;
-    }
-    switch((*(int*)stack_top(this->status))){
-        case Q_RBTREE_IDENTITY_LEFT:
-            this->current=this->current->parent;
-            (*(int*)stack_top(this->status))=Q_RBTREE_IDENTITY_CENTER;
-            break;
-        case Q_RBTREE_IDENTITY_CENTER:
-            if(this->current->rchild==NULL){
-                if(stack_empty(this->status)){
+    if(this->current->rchild==NULL){
+        if(this->current->parent==NULL){
+            this->current=NULL;
+            return;
+        }
+        if(this->current->parent->rchild==this->current){
+            while(this->current->parent->rchild==this->current){
+                this->current=this->current->parent;
+                if(this->current->parent==NULL){
                     this->current=NULL;
                     return;
                 }
-                stack_pop(this->status);
-                rbtreeIterator_increase(this);
-                return;
             }
-            this->current=this->current->rchild;
-            (*(int*)stack_top(this->status))=Q_RBTREE_IDENTITY_RIGHT;
-            while(this->current->lchild!=NULL){
-                //reach the leaf!
-                int a=Q_RBTREE_IDENTITY_LEFT;stack_push((this->status),&a);
-                this->current=this->current->lchild;
-            }
-            if(this->current->rchild!=NULL){
-                /*(*(int*)stack_top(this->status))=Q_RBTREE_IDENTITY_CENTER;*/
-                int a=Q_RBTREE_IDENTITY_CENTER;stack_push(this->status,&a);
-            }
-            break;
-        case Q_RBTREE_IDENTITY_RIGHT:
-            stack_pop(this->status);
             this->current=this->current->parent;
-            rbtreeIterator_increase(this);
-            break;
-        default:
-            /*printf("%d\n",(*(int*)stack_top(this->status)));*/
-            fakeSegmentFault("InvalidValueException:an invalid value has been put into a specialized stack.");
-            break;
+        }else{
+            this->current=this->current->parent;
+        }
+    }else{
+        this->current=this->current->rchild;
+        while(this->current->lchild!=NULL)
+            this->current=this->current->lchild;
     }
 }
 
 void rbtreeIterator_decrease(rbtreeIterator* this){
-    if(stack_empty(this->status)){
-        this->current=NULL;
-        return;
-    }
-    switch((*(int*)stack_top(this->status))){
-        case Q_RBTREE_IDENTITY_RIGHT:
-            this->current=this->current->parent;
-            (*(int*)stack_top(this->status))=Q_RBTREE_IDENTITY_CENTER;
-            break;
-        case Q_RBTREE_IDENTITY_CENTER:
-            if(this->current->lchild==NULL){
-                if(stack_empty(this->status)){
+    if(this->current->lchild==NULL){
+        if(this->current->parent==NULL){
+            this->current=NULL;
+            return;
+        }
+        if(this->current->parent->lchild==this->current){
+            while(this->current->parent->lchild==this->current){
+                this->current=this->current->parent;
+                if(this->current->parent==NULL){
                     this->current=NULL;
                     return;
                 }
-                stack_pop(this->status);
-                rbtreeIterator_decrease(this);
-                return;
             }
-            this->current=this->current->lchild;
-            (*(int*)stack_top(this->status))=Q_RBTREE_IDENTITY_LEFT;
-            while(this->current->rchild!=NULL){
-                //reach the leaf!
-                int a=Q_RBTREE_IDENTITY_RIGHT;stack_push((this->status),&a);
-                this->current=this->current->rchild;
-            }
-            if(this->current->lchild!=NULL){
-                /*(*(int*)stack_top(this->status))=Q_RBTREE_IDENTITY_CENTER;*/
-                int a=Q_RBTREE_IDENTITY_CENTER;stack_push(this->status,&a);
-            }
-            break;
-        case Q_RBTREE_IDENTITY_LEFT:
-            stack_pop(this->status);
             this->current=this->current->parent;
-            rbtreeIterator_decrease(this);
-            break;
-        default:
-            /*printf("%d\n",(*(int*)stack_top(this->status)));*/
-            fakeSegmentFault("InvalidValueException:an invalid value has been put into a specialized stack.");
-            break;
+        }else{
+            this->current=this->current->parent;
+        }
+    }else{
+        this->current=this->current->lchild;
+        while(this->current->rchild!=NULL)
+            this->current=this->current->rchild;
     }
 }
 
 rbtreeIterator* rbt_first(rbtreeNode* root){
-    rbtreeIterator * tmp=rbtreeIterator_constructor(root);
-    /*int a=Q_RBTREE_IDENTITY_LEFT;stack_push(tmp->status,&a);*/
-    while(tmp->current->lchild!=NULL){
-        qLog("CONSTRUCTOR GO LEFT");
-        tmp->current=tmp->current->lchild;
-        int a=Q_RBTREE_IDENTITY_LEFT;stack_push(tmp->status,&a);
-    }
-    if(tmp->current->rchild!=NULL){
-        /*(*(int*)stack_top(tmp->status))=Q_RBTREE_IDENTITY_CENTER;*/
-        int a=Q_RBTREE_IDENTITY_CENTER;stack_push(tmp->status,&a);
-    }
-    return tmp;
+    rbtreeIterator *p=rbtreeIterator_constructor(root);
+    while(p->current->lchild!=NULL)
+        p->current=p->current->lchild;
+    return p;
 }
 
 rbtreeIterator* rbt_last(rbtreeNode* root){
-    rbtreeIterator * tmp=rbtreeIterator_constructor(root);
-    while(tmp->current->rchild!=NULL){
-        tmp->current=tmp->current->rchild;
-        int a=Q_RBTREE_IDENTITY_RIGHT;stack_push(tmp->status,&a);
-    }
-    if(tmp->current->lchild!=NULL){
-        int a=Q_RBTREE_IDENTITY_CENTER;stack_push(tmp->status,&a);
-    }
-    return tmp;
+    rbtreeIterator *p=rbtreeIterator_constructor(root);
+    while(p->current->rchild!=NULL)
+        p->current=p->current->rchild;
+    return p;
 }
 
 rbtreeIterator* rbt_find(rbtreeNode* root,void* key,int (*cmp)(void*,void*)){
-    rbtreeIterator* tmp=rbtreeIterator_constructor(root);
-    while(1){
-        int cmpresult=cmp(key,tmp->current->key);
-        if(cmpresult>0){
-            if(tmp->current->rchild==NULL){
-                free(tmp);
-                return NULL;
-            }
-            int a=Q_RBTREE_IDENTITY_RIGHT;stack_push(tmp->status,&a);
-            tmp->current=tmp->current->rchild;
-        }else if(cmpresult<0){
-            if(tmp->current->lchild==NULL){
-                free(tmp);
-                return NULL;
-            }
-            int a=Q_RBTREE_IDENTITY_LEFT;stack_push(tmp->status,&a);
-            tmp->current=tmp->current->lchild;
-        }else{
-            if(tmp->current->lchild!=NULL || tmp->current->rchild!=NULL){
-                int a=Q_RBTREE_IDENTITY_CENTER;stack_push(tmp->status,&a);
-            }
-            return tmp;
-        }
-    }
+    return rbtreeIterator_constructor(rbt_getValue(root,key,cmp));
 }
 
 rbtreeIterator* rbt_getNext(rbtreeNode* root,void* key,int (*cmp)(void*,void*)){
