@@ -82,3 +82,19 @@ void* unordered_map_ptr_at(Unordered_map* this,void* key){
     }
     return NULL;
 }
+
+int hash_int(void* a){
+    return ((*(int*)a) % 131);
+}
+int hash_float(void* a){
+    return ((*(int*)a) % 131);
+}
+int hash_double(void* a){
+    return ((*(long*)a) % 131);
+}
+int hash_long(void* a){
+    return ((*(long*)a) % 131);
+}
+int hash_long_long(void* a){
+    return ((*(long long*)a)%131);
+}

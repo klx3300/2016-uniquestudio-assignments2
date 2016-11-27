@@ -3,10 +3,12 @@
 #endif
 #include <stdbool.h>
 #include <stdlib.h>
-#define qUnorderedMap(keyType,valueType,hashfunc,maxhashv) unordered_map_constructor(sizeof(keyType),sizeof(valueType),hashfunc,maxhashv)
+#define qUnorderedMap(keyType,valueType,hashfunc,arrayLength) unordered_map_constructor(sizeof(keyType),sizeof(valueType),hashfunc,arrayLength)
 typedef struct Unordered_map Unordered_map;
 typedef long long UNORDERED_MAP_KEY;
 typedef double UNORDERED_MAP_TYPE;
+
+#define Q_DEFAULT_MAXHASHV 131
 
 typedef struct MapData{
     void* key;
@@ -38,3 +40,9 @@ void unordered_map_earse(Unordered_map* st, void* key);
 // return NULL if not found
 // otherwise return pointer to value 
 void* unordered_map_ptr_at(Unordered_map* st, void* key);
+
+int hash_int(void*);
+int hash_float(void*);
+int hash_double(void*);
+int hash_long(void*);
+int hash_long_long(void*);
