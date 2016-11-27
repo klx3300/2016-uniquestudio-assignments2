@@ -47,8 +47,8 @@ void list_clear(List* lis);
 
 //      a, b, c, ...,m, where, n, ...
 // =>   a, b, c, ...,m, value, where, n, ...
-void list_insert(List* lis, int where, void* value);
-void list_erase(List* lst,int where);
+void list_insert(List* lis, ListIterator* where, void* value);
+void list_erase(List* lst,ListIterator* where);
 
 void list_push_back(List* lis, void* value);
 void list_pop_back(List* lis);

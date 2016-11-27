@@ -52,15 +52,12 @@ void list_clear(List* lst){
     lst->first=NULL;lst->last=NULL;lst->size=0;
 }
 
-void list_insert(List* lst,int where,void* value){
+void list_insert(List* lst,ListIterator* where,void* value){
     if(lst->first==NULL){
         list_push_back(lst,value);
         return;
     }
-    ListNode* iterator=lst->first;
-    for(int i=0;i<where;i++){
-        iterator=iterator->next;
-    }
+    ListNode* iterator=where->curr;
     ListNode* prev=iterator->prev;
     ListNode* tmp=listNode_constructor(lst->step);
     prev->next=tmp;
@@ -135,15 +132,12 @@ void list_pop_front(List* lst){
     free(first);
 }
 
-void list_erase(List* lst,int where){
+void list_erase(List* lst,ListIterator* where){
     if(lst->size==0){
         fakeSegmentFault("Address Boundary Error.");
 
     }
-    ListNode* iterator=lst->first;
-    for(int i=0;i<where;i++){
-        iterator=iterator->next;
-    }
+    ListNode* iterator=where->curr;
     if(iterator==NULL){
         fakeSegmentFault("Address Boundary Error.");
 
